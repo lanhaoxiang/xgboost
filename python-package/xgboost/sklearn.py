@@ -794,9 +794,11 @@ class XGBClassifier(XGBModel, XGBClassifierBase):
         prediction : numpy array
             a numpy array with the probability of each data example being of a given class.
         """
+        print("DMatrix")
         test_dmatrix = DMatrix(data, missing=self.missing, nthread=self.n_jobs)
         if ntree_limit is None:
             ntree_limit = getattr(self, "best_ntree_limit", 0)
+        print("get_booster().predict")
         class_probs = self.get_booster().predict(test_dmatrix,
                                                  ntree_limit=ntree_limit,
                                                  validate_features=validate_features)

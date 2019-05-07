@@ -1216,18 +1216,23 @@ class Booster(object):
 
         if validate_features:
             self._validate_features(data)
-
+        print("core:check1")
         length = c_bst_ulong()
+        print("core:check2")
         preds = ctypes.POINTER(ctypes.c_float)()
+        print("core:check3")
         _check_call(_LIB.XGBoosterPredict(self.handle, data.handle,
                                           ctypes.c_int(option_mask),
                                           ctypes.c_uint(ntree_limit),
                                           ctypes.byref(length),
                                           ctypes.byref(preds)))
+        print("core:check4")
         preds = ctypes2numpy(preds, length.value, np.float32)
+        print("core:check5")
         if pred_leaf:
             preds = preds.astype(np.int32)
         nrow = data.num_row()
+        print("core:check1")
         if preds.size != nrow and preds.size % nrow == 0:
             chunk_size = int(preds.size / nrow)
 
@@ -1245,6 +1250,7 @@ class Booster(object):
                     preds = preds.reshape(nrow, ngroup, data.num_col() + 1)
             else:
                 preds = preds.reshape(nrow, chunk_size)
+        print("core:check6")
         return preds
 
     def save_model(self, fname):
