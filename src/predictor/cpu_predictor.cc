@@ -65,6 +65,7 @@ class CPUPredictor : public Predictor {
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
       LOG(CONSOLE) << "start collecting the prediction3";
       const bst_omp_uint rest = nsize % kUnroll;
+      LOG(CONSOLE) << "start collecting the prediction33";
 #pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
         LOG(CONSOLE) << "start collecting the prediction4";
