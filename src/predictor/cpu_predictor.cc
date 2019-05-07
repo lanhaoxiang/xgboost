@@ -60,22 +60,17 @@ class CPUPredictor : public Predictor {
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
       const bst_omp_uint rest = nsize % kUnroll;
 #pragma omp parallel for schedule(static)
-      LOG(CONSOLE) << "start collecting the prediction11";
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
-        LOG(CONSOLE) << "start collecting the prediction12";
         const int tid = omp_get_thread_num();
-        LOG(CONSOLE) << "start collecting the prediction13";
         RegTree::FVec& feats = thread_temp[tid];
         int64_t ridx[kUnroll];
         SparsePage::Inst inst[kUnroll];
         for (int k = 0; k < kUnroll; ++k) {
           ridx[k] = static_cast<int64_t>(batch.base_rowid + i + k);
         }
-        LOG(CONSOLE) << "start collecting the prediction14";
         for (int k = 0; k < kUnroll; ++k) {
           inst[k] = batch[i + k];
         }
-        LOG(CONSOLE) << "start collecting the prediction15";
         for (int k = 0; k < kUnroll; ++k) {
           for (int gid = 0; gid < num_group; ++gid) {
             const size_t offset = ridx[k] * num_group + gid;
