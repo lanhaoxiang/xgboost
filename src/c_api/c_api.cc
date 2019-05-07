@@ -12,7 +12,6 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include <stdio.h>
 
 #include "./c_api_error.h"
 #include "../data/simple_csr_source.h"
@@ -960,15 +959,15 @@ XGB_DLL int XGBoosterPredict(BoosterHandle handle,
                              const bst_float **out_result) {
   std::vector<bst_float>&preds =
     XGBAPIThreadLocalStore::Get()->ret_vec_float;
-    printf("API_BEGIN\n");
+  LOG(CONSOLE) << "API_BEGIN";
   API_BEGIN();
-  printf("CHECK_HANDLE\n");
+  LOG(CONSOLE) << "CHECK_HANDLE";
   CHECK_HANDLE();
   auto *bst = static_cast<Booster*>(handle);
-  printf("LazyInit\n");
+  LOG(CONSOLE) << "LazyInit";
   bst->LazyInit();
   HostDeviceVector<bst_float> tmp_preds;
-  printf("bst->learner()->Predict\n");
+  LOG(CONSOLE) << "bst->learner()->Predict";
   bst->learner()->Predict(
       static_cast<std::shared_ptr<DMatrix>*>(dmat)->get(),
       (option_mask & 1) != 0,
@@ -977,9 +976,11 @@ XGB_DLL int XGBoosterPredict(BoosterHandle handle,
       (option_mask & 4) != 0,
       (option_mask & 8) != 0,
       (option_mask & 16) != 0);
+  LOG(CONSOLE) << "HostVector";
   preds = tmp_preds.HostVector();
   *out_result = dmlc::BeginPtr(preds);
   *len = static_cast<xgboost::bst_ulong>(preds.size());
+  LOG(CONSOLE) << "API_END";
   API_END();
 }
 
