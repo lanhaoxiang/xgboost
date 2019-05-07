@@ -52,6 +52,7 @@ class CPUPredictor : public Predictor {
     CHECK_EQ(model.param.size_leaf_vector, 0)
         << "size_leaf_vector is enforced to 0 so far";
     CHECK_EQ(preds.size(), p_fmat->Info().num_row_ * num_group);
+    LOG(CONSOLE) << "start collecting the prediction";
     // start collecting the prediction
     for (const auto &batch : p_fmat->GetRowBatches()) {
       // parallel over local batch
@@ -158,14 +159,14 @@ class CPUPredictor : public Predictor {
     if (this->PredictFromCache(dmat, out_preds, model, ntree_limit)) {
       return;
     }
-
+    LOG(CONSOLE)<<"CPU PredictBatch";
     this->InitOutPredictions(dmat->Info(), out_preds, model);
 
     ntree_limit *= model.param.num_output_group;
     if (ntree_limit == 0 || ntree_limit > model.trees.size()) {
       ntree_limit = static_cast<unsigned>(model.trees.size());
     }
-
+    LOG(CONSOLE)<<"CPU PredLoopInternal";
     this->PredLoopInternal(dmat, &out_preds->HostVector(), model,
                            tree_begin, ntree_limit);
   }
