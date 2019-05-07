@@ -66,7 +66,7 @@ class CPUPredictor : public Predictor {
       LOG(CONSOLE) << "start collecting the prediction3";
       const bst_omp_uint rest = nsize % kUnroll;
       LOG(CONSOLE) << "start collecting the prediction33";
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
         LOG(CONSOLE) << "start collecting the prediction4";
         const int tid = omp_get_thread_num();
