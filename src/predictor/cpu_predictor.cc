@@ -66,7 +66,7 @@ class CPUPredictor : public Predictor {
       LOG(CONSOLE) << "start collecting the prediction3";
       const bst_omp_uint rest = nsize % kUnroll;
       LOG(CONSOLE) << "start collecting the prediction33";
-//#pragma omp parallel for schedule(static)
+////#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
         LOG(CONSOLE) << "start collecting the prediction4";
         const int tid = omp_get_thread_num();
@@ -247,7 +247,7 @@ class CPUPredictor : public Predictor {
     for (const auto &batch : p_fmat->GetRowBatches()) {
       // parallel over local batch
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize; ++i) {
         const int tid = omp_get_thread_num();
         auto ridx = static_cast<size_t>(batch.base_rowid + i);
@@ -284,7 +284,7 @@ class CPUPredictor : public Predictor {
     // allocated one
     std::fill(contribs.begin(), contribs.end(), 0);
     // initialize tree node mean values
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (bst_omp_uint i = 0; i < ntree_limit; ++i) {
       model.trees[i]->FillNodeMeanValues();
     }
@@ -293,7 +293,7 @@ class CPUPredictor : public Predictor {
     for (const auto &batch : p_fmat->GetRowBatches()) {
       // parallel over local batch
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize; ++i) {
         auto row_idx = static_cast<size_t>(batch.base_rowid + i);
         unsigned root_id = info.GetRoot(row_idx);

@@ -43,7 +43,7 @@ struct BitMap {
     this->Resize(vec.size());
     // parallel over the full cases
     auto nsize = static_cast<bst_omp_uint>(vec.size() / 32);
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (bst_omp_uint i = 0; i < nsize; ++i) {
       uint32_t res = 0;
       for (int k = 0; k < 32; ++k) {

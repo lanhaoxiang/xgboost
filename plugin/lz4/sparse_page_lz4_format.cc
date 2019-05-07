@@ -249,7 +249,7 @@ class SparsePageLZ4Format : public SparsePageFormat {
     int nindex = index_.num_chunk();
     int nvalue = value_.num_chunk();
     int ntotal = nindex + nvalue;
-    #pragma omp parallel for schedule(dynamic, 1)  num_threads(nthread_write_)
+    //#pragma omp parallel for schedule(dynamic, 1)  num_threads(nthread_write_)
     for (int i = 0; i < ntotal; ++i) {
       if (i < nindex) {
         index_.Compress(i, use_lz4_hc_);
@@ -275,7 +275,7 @@ class SparsePageLZ4Format : public SparsePageFormat {
     int nindex = index_.num_chunk();
     int nvalue = value_.num_chunk();
     int ntotal = nindex + nvalue;
-    #pragma omp parallel for schedule(dynamic, 1) num_threads(nthread_)
+    //#pragma omp parallel for schedule(dynamic, 1) num_threads(nthread_)
     for (int i = 0; i < ntotal; ++i) {
       if (i < nindex) {
         index_.Decompress(i);

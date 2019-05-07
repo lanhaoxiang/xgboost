@@ -147,7 +147,7 @@ class SketchMaker: public BaseMaker {
     for (const auto &batch : p_fmat->GetSortedColumnBatches()) {
       // start enumeration
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
-      #pragma omp parallel for schedule(dynamic, 1)
+      //#pragma omp parallel for schedule(dynamic, 1)
       for (bst_omp_uint fidx = 0; fidx < nsize; ++fidx) {
         this->UpdateSketchCol(gpair, batch[fidx], tree,
                               node_stats_,
@@ -266,7 +266,7 @@ class SketchMaker: public BaseMaker {
     // get the best split condition for each node
     std::vector<SplitEntry> sol(qexpand_.size());
     auto nexpand = static_cast<bst_omp_uint>(qexpand_.size());
-    #pragma omp parallel for schedule(dynamic, 1)
+    //#pragma omp parallel for schedule(dynamic, 1)
     for (bst_omp_uint wid = 0; wid < nexpand; ++wid) {
       const int nid = qexpand_[wid];
       CHECK_EQ(node2workindex_[nid], static_cast<int>(wid));

@@ -374,7 +374,7 @@ class FastHistMaker: public TreeUpdater {
         hist_.Init(nbins);
 
         // initialize histogram builder
-        #pragma omp parallel
+        //#pragma omp parallel
         {
           this->nthread_ = omp_get_num_threads();
         }
@@ -476,11 +476,11 @@ class FastHistMaker: public TreeUpdater {
       const auto nfeature = static_cast<bst_uint>(feature_set.size());
       const auto nthread = static_cast<bst_omp_uint>(this->nthread_);
       best_split_tloc_.resize(nthread);
-      #pragma omp parallel for schedule(static) num_threads(nthread)
+      //#pragma omp parallel for schedule(static) num_threads(nthread)
       for (bst_omp_uint tid = 0; tid < nthread; ++tid) {
         best_split_tloc_[tid] = snode_[nid].best;
       }
-      #pragma omp parallel for schedule(dynamic) num_threads(nthread)
+      //#pragma omp parallel for schedule(dynamic) num_threads(nthread)
       for (bst_omp_uint i = 0; i < nfeature; ++i) {
         const bst_uint fid = feature_set[i];
         const unsigned tid = omp_get_thread_num();
@@ -562,7 +562,7 @@ class FastHistMaker: public TreeUpdater {
       const size_t nrows = rowset.end - rowset.begin;
       const size_t rest = nrows % kUnroll;
 
-      #pragma omp parallel for num_threads(nthread_) schedule(static)
+      //#pragma omp parallel for num_threads(nthread_) schedule(static)
       for (bst_omp_uint i = 0; i < nrows - rest; i += kUnroll) {
         const bst_uint tid = omp_get_thread_num();
         auto& left = row_split_tloc[tid].left;
@@ -623,7 +623,7 @@ class FastHistMaker: public TreeUpdater {
       std::vector<RowSetCollection::Split>& row_split_tloc = *p_row_split_tloc;
       const size_t nrows = rowset.end - rowset.begin;
 
-      #pragma omp parallel num_threads(nthread_)
+      //#pragma omp parallel num_threads(nthread_)
       {
         const auto tid = static_cast<size_t>(omp_get_thread_num());
         const size_t ibegin = tid * nrows / nthread_;

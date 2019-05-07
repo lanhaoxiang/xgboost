@@ -983,7 +983,7 @@ template <typename T, typename FunctionT>
 void ExecuteShards(std::vector<T> *shards, FunctionT f) {
   SaveCudaContext {
     [&](){
-#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
+//#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
       for (int shard = 0; shard < shards->size(); ++shard) {
         f(shards->at(shard));
       }
@@ -1005,7 +1005,7 @@ template <typename T, typename FunctionT>
 void ExecuteIndexShards(std::vector<T> *shards, FunctionT f) {
   SaveCudaContext {
     [&](){
-#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
+//#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
       for (int shard = 0; shard < shards->size(); ++shard) {
         f(shard, shards->at(shard));
       }
@@ -1030,7 +1030,7 @@ ReduceT ReduceShards(std::vector<ShardT> *shards, FunctionT f) {
   std::vector<ReduceT> sums(shards->size());
   SaveCudaContext {
     [&](){
-#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
+//#pragma omp parallel for schedule(static, 1) if (shards->size() > 1)
       for (int shard = 0; shard < shards->size(); ++shard) {
         sums[shard] = f(shards->at(shard));
       }}

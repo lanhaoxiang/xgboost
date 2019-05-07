@@ -34,7 +34,7 @@ void HistCutMatrix::Init(DMatrix* p_fmat, uint32_t max_num_bins) {
 
   const auto& weights = info.weights_.HostVector();
   for (const auto &batch : p_fmat->GetRowBatches()) {
-    #pragma omp parallel num_threads(nthread)
+    //#pragma omp parallel num_threads(nthread)
     {
       CHECK_EQ(nthread, omp_get_num_threads());
       auto tid = static_cast<unsigned>(omp_get_thread_num());
@@ -143,7 +143,7 @@ void GHistIndexMatrix::Init(DMatrix* p_fmat, int max_num_bins) {
     CHECK_EQ(cut.row_ptr.back(), cut.cut.size());
 
     auto bsize = static_cast<omp_ulong>(batch.Size());
-    #pragma omp parallel for num_threads(nthread) schedule(static)
+    //#pragma omp parallel for num_threads(nthread) schedule(static)
     for (omp_ulong i = 0; i < bsize; ++i) { // NOLINT(*)
       const int tid = omp_get_thread_num();
       size_t ibegin = row_ptr[rbegin + i];
@@ -160,7 +160,7 @@ void GHistIndexMatrix::Init(DMatrix* p_fmat, int max_num_bins) {
       std::sort(index.begin() + ibegin, index.begin() + iend);
     }
 
-    #pragma omp parallel for num_threads(nthread) schedule(static)
+    //#pragma omp parallel for num_threads(nthread) schedule(static)
     for (bst_omp_uint idx = 0; idx < bst_omp_uint(nbins); ++idx) {
       for (int tid = 0; tid < nthread; ++tid) {
         hit_count[idx] += hit_count_tloc_[tid * nbins + idx];
@@ -406,7 +406,7 @@ void GHistBuilder::BuildHist(const std::vector<GradientPair>& gpair,
   const size_t nrows = row_indices.end - row_indices.begin;
   const size_t rest = nrows % kUnroll;
 
-  #pragma omp parallel for num_threads(nthread) schedule(guided)
+  //#pragma omp parallel for num_threads(nthread) schedule(guided)
   for (bst_omp_uint i = 0; i < nrows - rest; i += kUnroll) {
     const bst_omp_uint tid = omp_get_thread_num();
     const size_t off = tid * nbins_;
@@ -444,7 +444,7 @@ void GHistBuilder::BuildHist(const std::vector<GradientPair>& gpair,
 
   /* reduction */
   const uint32_t nbins = nbins_;
-  #pragma omp parallel for num_threads(nthread) schedule(static)
+  //#pragma omp parallel for num_threads(nthread) schedule(static)
   for (bst_omp_uint bin_id = 0; bin_id < bst_omp_uint(nbins); ++bin_id) {
     for (bst_omp_uint tid = 0; tid < nthread; ++tid) {
       hist.begin[bin_id].Add(data_[tid * nbins_ + bin_id]);
@@ -465,7 +465,7 @@ void GHistBuilder::BuildBlockHist(const std::vector<GradientPair>& gpair,
   const auto nthread = static_cast<bst_omp_uint>(this->nthread_);
 #endif
 
-  #pragma omp parallel for num_threads(nthread) schedule(guided)
+  //#pragma omp parallel for num_threads(nthread) schedule(guided)
   for (bst_omp_uint bid = 0; bid < nblock; ++bid) {
     auto gmat = gmatb[bid];
 
@@ -513,7 +513,7 @@ void GHistBuilder::SubtractionTrick(GHistRow self, GHistRow sibling, GHistRow pa
   const auto nthread = static_cast<bst_omp_uint>(this->nthread_);
 #endif
 
-  #pragma omp parallel for num_threads(nthread) schedule(static)
+  //#pragma omp parallel for num_threads(nthread) schedule(static)
   for (bst_omp_uint bin_id = 0;
        bin_id < static_cast<bst_omp_uint>(nbins - rest); bin_id += kUnroll) {
     GHistEntry pb[kUnroll];

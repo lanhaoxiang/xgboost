@@ -99,7 +99,7 @@ class HistMaker: public BaseMaker {
     // aggregate all statistics to hset[0]
     inline void Aggregate() {
       bst_omp_uint nsize = static_cast<bst_omp_uint>(cut.size());
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize; ++i) {
         for (size_t tid = 1; tid < hset.size(); ++tid) {
           hset[0].data[i].Add(hset[tid].data[i]);
@@ -221,7 +221,7 @@ class HistMaker: public BaseMaker {
     std::vector<SplitEntry> sol(qexpand_.size());
     std::vector<TStats> left_sum(qexpand_.size());
     auto nexpand = static_cast<bst_omp_uint>(qexpand_.size());
-    #pragma omp parallel for schedule(dynamic, 1)
+    //#pragma omp parallel for schedule(dynamic, 1)
     for (bst_omp_uint wid = 0; wid < nexpand; ++wid) {
       const int nid = qexpand_[wid];
       CHECK_EQ(node2workindex_[nid], static_cast<int>(wid));
@@ -347,7 +347,7 @@ class CQHistMaker: public HistMaker<TStats> {
       for (const auto &batch : p_fmat->GetSortedColumnBatches()) {
         // start enumeration
         const auto nsize = static_cast<bst_omp_uint>(fset.size());
-        #pragma omp parallel for schedule(dynamic, 1)
+        //#pragma omp parallel for schedule(dynamic, 1)
         for (bst_omp_uint i = 0; i < nsize; ++i) {
           int fid = fset[i];
           int offset = feat2workindex_[fid];
@@ -429,7 +429,7 @@ class CQHistMaker: public HistMaker<TStats> {
 
         // start enumeration
         const auto nsize = static_cast<bst_omp_uint>(work_set_.size());
-        #pragma omp parallel for schedule(dynamic, 1)
+        //#pragma omp parallel for schedule(dynamic, 1)
         for (bst_omp_uint i = 0; i < nsize; ++i) {
           int fid = work_set_[i];
           int offset = feat2workindex_[fid];
@@ -714,7 +714,7 @@ class GlobalProposalHistMaker: public CQHistMaker<TStats> {
 
         // start enumeration
         const auto nsize = static_cast<bst_omp_uint>(this->work_set_.size());
-        #pragma omp parallel for schedule(dynamic, 1)
+        //#pragma omp parallel for schedule(dynamic, 1)
         for (bst_omp_uint i = 0; i < nsize; ++i) {
           int fid = this->work_set_[i];
           int offset = this->feat2workindex_[fid];

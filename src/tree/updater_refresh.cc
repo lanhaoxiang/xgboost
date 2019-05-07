@@ -38,7 +38,7 @@ class TreeRefresher: public TreeUpdater {
     const int nthread = omp_get_max_threads();
     fvec_temp.resize(nthread, RegTree::FVec());
     stemp.resize(nthread, std::vector<TStats>());
-    #pragma omp parallel
+    //#pragma omp parallel
     {
       int tid = omp_get_thread_num();
       int num_nodes = 0;
@@ -60,7 +60,7 @@ class TreeRefresher: public TreeUpdater {
       for (const auto &batch : p_fmat->GetRowBatches()) {
         CHECK_LT(batch.Size(), std::numeric_limits<unsigned>::max());
         const auto nbatch = static_cast<bst_omp_uint>(batch.Size());
-        #pragma omp parallel for schedule(static)
+        //#pragma omp parallel for schedule(static)
         for (bst_omp_uint i = 0; i < nbatch; ++i) {
           SparsePage::Inst inst = batch[i];
           const int tid = omp_get_thread_num();
@@ -78,7 +78,7 @@ class TreeRefresher: public TreeUpdater {
       }
       // aggregate the statistics
       auto num_nodes = static_cast<int>(stemp[0].size());
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (int nid = 0; nid < num_nodes; ++nid) {
         for (int tid = 1; tid < nthread; ++tid) {
           stemp[0][nid].Add(stemp[tid][nid]);

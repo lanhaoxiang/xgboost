@@ -201,7 +201,7 @@ class SparsePage {
     const int nthread = omp_get_max_threads();
     builder.InitBudget(num_columns, nthread);
     long batch_size = static_cast<long>(this->Size());  // NOLINT(*)
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
     for (long i = 0; i < batch_size; ++i) {  // NOLINT(*)
       int tid = omp_get_thread_num();
       auto inst = (*this)[i];
@@ -210,7 +210,7 @@ class SparsePage {
       }
     }
     builder.InitStorage();
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
     for (long i = 0; i < batch_size; ++i) {  // NOLINT(*)
       int tid = omp_get_thread_num();
       auto inst = (*this)[i];
@@ -226,7 +226,7 @@ class SparsePage {
 
   void SortRows() {
     auto ncol = static_cast<bst_omp_uint>(this->Size());
-#pragma omp parallel for schedule(dynamic, 1)
+//#pragma omp parallel for schedule(dynamic, 1)
     for (bst_omp_uint i = 0; i < ncol; ++i) {
       if (this->offset.HostVector()[i] < this->offset.HostVector()[i + 1]) {
         std::sort(

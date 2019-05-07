@@ -37,7 +37,7 @@ struct EvalMClassBase : public Metric {
     const auto& labels = info.labels_.HostVector();
     const auto& weights = info.weights_.HostVector();
 
-    #pragma omp parallel for reduction(+: sum, wsum) schedule(static)
+    //#pragma omp parallel for reduction(+: sum, wsum) schedule(static)
     for (bst_omp_uint i = 0; i < ndata; ++i) {
       const bst_float wt = weights.size() > 0 ? weights[i] : 1.0f;
       auto label =  static_cast<int>(labels[i]);

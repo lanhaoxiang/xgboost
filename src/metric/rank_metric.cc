@@ -35,7 +35,7 @@ struct EvalAMS : public Metric {
     const auto ndata = static_cast<bst_omp_uint>(info.labels_.Size());
     std::vector<std::pair<bst_float, unsigned> > rec(ndata);
 
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (bst_omp_uint i = 0; i < ndata; ++i) {
       rec[i] = std::make_pair(preds[i], i);
     }
@@ -171,7 +171,7 @@ struct EvalRankList : public Metric {
     // sum statistics
     double sum_metric = 0.0f;
     const auto& labels = info.labels_.HostVector();
-    #pragma omp parallel reduction(+:sum_metric)
+    //#pragma omp parallel reduction(+:sum_metric)
     {
       // each thread takes a local rec
       std::vector< std::pair<bst_float, unsigned> > rec;

@@ -125,7 +125,7 @@ class Transform {
 
       GPUSet devices = distribution_.Devices();
       size_t range_size = *range_.end() - *range_.begin();
-#pragma omp parallel for schedule(static, 1) if (devices.Size() > 1)
+//#pragma omp parallel for schedule(static, 1) if (devices.Size() > 1)
       for (omp_ulong i = 0; i < devices.Size(); ++i) {
         int d = devices.Index(i);
         // Ignore other attributes of GPUDistribution for spliting index.
@@ -154,7 +154,7 @@ class Transform {
     template <typename... HDV>
     void LaunchCPU(Functor func, HDV*... vectors) const {
       auto end = *(range_.end());
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (omp_ulong idx = 0; idx < end; ++idx) {
         func(idx, UnpackHDV(vectors)...);
       }

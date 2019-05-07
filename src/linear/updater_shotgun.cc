@@ -82,7 +82,7 @@ class ShotgunUpdater : public LinearUpdater {
                      param_.reg_alpha_denorm, param_.reg_lambda_denorm, 0);
     for (const auto &batch : p_fmat->GetColumnBatches()) {
       const auto nfeat = static_cast<bst_omp_uint>(batch.Size());
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nfeat; ++i) {
         int ii = selector_->NextFeature
           (i, *model, 0, in_gpair->ConstHostVector(), p_fmat, param_.reg_alpha_denorm,

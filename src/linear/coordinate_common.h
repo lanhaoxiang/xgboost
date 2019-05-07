@@ -97,7 +97,7 @@ inline std::pair<double, double> GetGradientParallel(int group_idx, int num_grou
   for (const auto &batch : p_fmat->GetColumnBatches()) {
     auto col = batch[fidx];
     const auto ndata = static_cast<bst_omp_uint>(col.size());
-#pragma omp parallel for schedule(static) reduction(+ : sum_grad, sum_hess)
+//#pragma omp parallel for schedule(static) reduction(+ : sum_grad, sum_hess)
     for (bst_omp_uint j = 0; j < ndata; ++j) {
       const bst_float v = col[j].fvalue;
       auto &p = gpair[col[j].index * num_group + group_idx];
@@ -124,7 +124,7 @@ inline std::pair<double, double> GetBiasGradientParallel(int group_idx, int num_
                                                          DMatrix *p_fmat) {
   double sum_grad = 0.0, sum_hess = 0.0;
   const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
-#pragma omp parallel for schedule(static) reduction(+ : sum_grad, sum_hess)
+//#pragma omp parallel for schedule(static) reduction(+ : sum_grad, sum_hess)
   for (bst_omp_uint i = 0; i < ndata; ++i) {
     auto &p = gpair[i * num_group + group_idx];
     if (p.GetHess() >= 0.0f) {
@@ -153,7 +153,7 @@ inline void UpdateResidualParallel(int fidx, int group_idx, int num_group,
     auto col = batch[fidx];
     // update grad value
     const auto num_row = static_cast<bst_omp_uint>(col.size());
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
     for (bst_omp_uint j = 0; j < num_row; ++j) {
       GradientPair &p = (*in_gpair)[col[j].index * num_group + group_idx];
       if (p.GetHess() < 0.0f) continue;
@@ -176,7 +176,7 @@ inline void UpdateBiasResidualParallel(int group_idx, int num_group, float dbias
                                        DMatrix *p_fmat) {
   if (dbias == 0.0f) return;
   const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
   for (bst_omp_uint i = 0; i < ndata; ++i) {
     GradientPair &g = (*in_gpair)[i * num_group + group_idx];
     if (g.GetHess() < 0.0f) continue;
@@ -318,7 +318,7 @@ class GreedyFeatureSelector : public FeatureSelector {
     // Calculate univariate gradient sums
     std::fill(gpair_sums_.begin(), gpair_sums_.end(), std::make_pair(0., 0.));
   for (const auto &batch : p_fmat->GetColumnBatches()) {
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nfeat; ++i) {
         const auto col = batch[i];
         const bst_uint ndata = col.size();
@@ -384,7 +384,7 @@ class ThriftyFeatureSelector : public FeatureSelector {
     std::fill(gpair_sums_.begin(), gpair_sums_.end(), std::make_pair(0., 0.));
     for (const auto &batch : p_fmat->GetColumnBatches()) {
 // column-parallel is usually faster than row-parallel
-#pragma omp parallel for schedule(static)
+//#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nfeat; ++i) {
         const auto col = batch[i];
         const bst_uint ndata = col.size();

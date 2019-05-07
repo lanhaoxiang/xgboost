@@ -154,7 +154,7 @@ class GBLinear : public GradientBooster {
     for (const auto &batch : p_fmat->GetRowBatches()) {
       // parallel over local batch
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint i = 0; i < nsize; ++i) {
          auto inst = batch[i];
         auto row_idx = static_cast<size_t>(batch.base_rowid + i);
@@ -206,7 +206,7 @@ class GBLinear : public GradientBooster {
       // k is number of group
       // parallel over local batch
       const auto nsize = static_cast<omp_ulong>(batch.Size());
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (omp_ulong i = 0; i < nsize; ++i) {
         const size_t ridx = batch.base_rowid + i;
         // loop over output groups

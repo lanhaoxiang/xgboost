@@ -32,7 +32,7 @@ struct EvalEWiseBase : public Metric {
     double sum = 0.0, wsum = 0.0;
     const auto& labels = info.labels_.HostVector();
     const auto& weights = info.weights_.HostVector();
-    #pragma omp parallel for reduction(+: sum, wsum) schedule(static)
+    //#pragma omp parallel for reduction(+: sum, wsum) schedule(static)
     for (omp_ulong i = 0; i < ndata; ++i) {
       const bst_float wt = weights.size() > 0 ? weights[i] : 1.0f;
       sum += static_cast<const Derived*>(this)->EvalRow(labels[i], preds[i]) * wt;

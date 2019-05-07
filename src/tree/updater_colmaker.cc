@@ -207,7 +207,7 @@ class ColMaker: public TreeUpdater {
       const MetaInfo& info = fmat.Info();
       // setup position
       const auto ndata = static_cast<bst_omp_uint>(info.num_row_);
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
         const int tid = omp_get_thread_num();
         if (position_[ridx] < 0) continue;
@@ -255,7 +255,7 @@ class ColMaker: public TreeUpdater {
       bool need_forward = param_.NeedForwardSearch(p_fmat->GetColDensity(fid), ind);
       bool need_backward = param_.NeedBackwardSearch(p_fmat->GetColDensity(fid), ind);
       const std::vector<int> &qexpand = qexpand_;
-      #pragma omp parallel
+      //#pragma omp parallel
       {
         const int tid = omp_get_thread_num();
         std::vector<ThreadEntry> &temp = stemp_[tid];
@@ -279,7 +279,7 @@ class ColMaker: public TreeUpdater {
       }
       // start collecting the partial sum statistics
       auto nnode = static_cast<bst_omp_uint>(qexpand.size());
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint j = 0; j < nnode; ++j) {
         const int nid = qexpand[j];
         GradStats sum(param_), tmp(param_), c(param_);
@@ -340,7 +340,7 @@ class ColMaker: public TreeUpdater {
         }
       }
       // rescan, generate candidate split
-      #pragma omp parallel
+      //#pragma omp parallel
       {
         GradStats c(param_), cright(param_);
         const int tid = omp_get_thread_num();
@@ -597,7 +597,7 @@ class ColMaker: public TreeUpdater {
         poption = static_cast<int>(num_features) * 2 < this->nthread_ ? 1 : 0;
       }
       if (poption == 0) {
-        #pragma omp parallel for schedule(dynamic, batch_size)
+        //#pragma omp parallel for schedule(dynamic, batch_size)
         for (bst_omp_uint i = 0; i < num_features; ++i) {
           int fid = feat_set[i];
           const int tid = omp_get_thread_num();
@@ -658,7 +658,7 @@ class ColMaker: public TreeUpdater {
       // so that they are ignored in future statistics collection
       const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
 
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
         CHECK_LT(ridx, position_.size())
             << "ridx exceed bound " << "ridx="<<  ridx << " pos=" << position_.size();
@@ -704,7 +704,7 @@ class ColMaker: public TreeUpdater {
         for (auto fid : fsplits) {
           auto col = batch[fid];
           const auto ndata = static_cast<bst_omp_uint>(col.size());
-          #pragma omp parallel for schedule(static)
+          //#pragma omp parallel for schedule(static)
           for (bst_omp_uint j = 0; j < ndata; ++j) {
             const bst_uint ridx = col[j].index;
             const int nid = this->DecodePosition(ridx);
@@ -787,7 +787,7 @@ class DistColMaker : public ColMaker {
         : ColMaker::Builder(param, std::move(spliteval)) {}
     inline void UpdatePosition(DMatrix* p_fmat, const RegTree &tree) {
       const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
         int nid = this->DecodePosition(ridx);
         while (tree[nid].IsDeleted()) {
@@ -821,7 +821,7 @@ class DistColMaker : public ColMaker {
       {
         auto ndata = static_cast<bst_omp_uint>(this->position_.size());
         boolmap_.resize(ndata);
-        #pragma omp parallel for schedule(static)
+        //#pragma omp parallel for schedule(static)
         for (bst_omp_uint j = 0; j < ndata; ++j) {
             boolmap_[j] = 0;
         }
@@ -830,7 +830,7 @@ class DistColMaker : public ColMaker {
         for (auto fid : fsplits) {
           auto col = batch[fid];
           const auto ndata = static_cast<bst_omp_uint>(col.size());
-          #pragma omp parallel for schedule(static)
+          //#pragma omp parallel for schedule(static)
           for (bst_omp_uint j = 0; j < ndata; ++j) {
             const bst_uint ridx = col[j].index;
             const bst_float fvalue = col[j].fvalue;
@@ -851,7 +851,7 @@ class DistColMaker : public ColMaker {
       rabit::Allreduce<rabit::op::BitOR>(dmlc::BeginPtr(bitmap_.data), bitmap_.data.size());
       // get the new position
       const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
-      #pragma omp parallel for schedule(static)
+      //#pragma omp parallel for schedule(static)
       for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
         const int nid = this->DecodePosition(ridx);
         if (bitmap_.Get(ridx)) {

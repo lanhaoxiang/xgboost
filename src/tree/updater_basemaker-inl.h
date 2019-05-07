@@ -212,7 +212,7 @@ class BaseMaker: public TreeUpdater {
     // so that they are ignored in future statistics collection
     const auto ndata = static_cast<bst_omp_uint>(p_fmat->Info().num_row_);
 
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
       const int nid = this->DecodePosition(ridx);
       if (tree[nid].IsLeaf()) {
@@ -247,7 +247,7 @@ class BaseMaker: public TreeUpdater {
 
       if (it != sorted_split_set.end() && *it == fid) {
         const auto ndata = static_cast<bst_omp_uint>(col.size());
-        #pragma omp parallel for schedule(static)
+        //#pragma omp parallel for schedule(static)
         for (bst_omp_uint j = 0; j < ndata; ++j) {
           const bst_uint ridx = col[j].index;
           const bst_float fvalue = col[j].fvalue;
@@ -303,7 +303,7 @@ class BaseMaker: public TreeUpdater {
       for (auto fid : fsplits) {
         auto col = batch[fid];
         const auto ndata = static_cast<bst_omp_uint>(col.size());
-        #pragma omp parallel for schedule(static)
+        //#pragma omp parallel for schedule(static)
         for (bst_omp_uint j = 0; j < ndata; ++j) {
           const bst_uint ridx = col[j].index;
           const bst_float fvalue = col[j].fvalue;
@@ -331,7 +331,7 @@ class BaseMaker: public TreeUpdater {
     const MetaInfo &info = fmat.Info();
     thread_temp.resize(omp_get_max_threads());
     p_node_stats->resize(tree.param.num_nodes);
-    #pragma omp parallel
+    //#pragma omp parallel
     {
       const int tid = omp_get_thread_num();
       thread_temp[tid].resize(tree.param.num_nodes, TStats(param_));
@@ -341,7 +341,7 @@ class BaseMaker: public TreeUpdater {
     }
     // setup position
     const auto ndata = static_cast<bst_omp_uint>(fmat.Info().num_row_);
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (bst_omp_uint ridx = 0; ridx < ndata; ++ridx) {
       const int nid = position_[ridx];
       const int tid = omp_get_thread_num();

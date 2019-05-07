@@ -333,7 +333,7 @@ XGB_DLL int XGDMatrixCreateFromCSCEx(const size_t* col_ptr,
   common::ParallelGroupBuilder<Entry> builder(&offset_vec, &data_vec);
   builder.InitBudget(0, nthread);
   size_t ncol = nindptr - 1;  // NOLINT(*)
-  #pragma omp parallel for schedule(static)
+  //#pragma omp parallel for schedule(static)
   for (omp_ulong i = 0; i < static_cast<omp_ulong>(ncol); ++i) {  // NOLINT(*)
     int tid = omp_get_thread_num();
     for (size_t j = col_ptr[i]; j < col_ptr[i+1]; ++j) {
@@ -343,7 +343,7 @@ XGB_DLL int XGDMatrixCreateFromCSCEx(const size_t* col_ptr,
     }
   }
   builder.InitStorage();
-  #pragma omp parallel for schedule(static)
+  //#pragma omp parallel for schedule(static)
   for (omp_ulong i = 0; i < static_cast<omp_ulong>(ncol); ++i) {  // NOLINT(*)
     int tid = omp_get_thread_num();
     for (size_t j = col_ptr[i]; j < col_ptr[i+1]; ++j) {
@@ -441,7 +441,7 @@ XGB_DLL int XGDMatrixCreateFromMat(const bst_float* data,
 
 void PrefixSum(size_t *x, size_t N) {
   size_t *suma;
-#pragma omp parallel
+//#pragma omp parallel
   {
     const int ithread = omp_get_thread_num();
     const int nthreads = omp_get_num_threads();
@@ -501,7 +501,7 @@ XGB_DLL int XGDMatrixCreateFromMat_omp(const bst_float* data,  // NOLINT
   std::vector<int> badnan;
   badnan.resize(nthread, 0);
 
-#pragma omp parallel num_threads(nthread)
+//#pragma omp parallel num_threads(nthread)
   {
     int ithread  = omp_get_thread_num();
 
@@ -530,7 +530,7 @@ XGB_DLL int XGDMatrixCreateFromMat_omp(const bst_float* data,  // NOLINT
   data_vec.resize(mat.page_.data.Size() + offset_vec.back());
 
   // Fill data matrix (now that know size, no need for slow push_back())
-#pragma omp parallel num_threads(nthread)
+//#pragma omp parallel num_threads(nthread)
   {
 #pragma omp for schedule(static)
     for (omp_ulong i = 0; i < nrow; ++i) {
@@ -646,7 +646,7 @@ XGB_DLL int XGDMatrixCreateFromDT(void** data, const char** feature_stypes,
   mat.info.num_col_ = ncol;
 
   auto& page_offset = mat.page_.offset.HostVector();
-#pragma omp parallel num_threads(nthread)
+//#pragma omp parallel num_threads(nthread)
   {
     // Count elements per row, column by column
     for (auto j = 0; j < ncol; ++j) {
@@ -669,7 +669,7 @@ XGB_DLL int XGDMatrixCreateFromDT(void** data, const char** feature_stypes,
 
   // Fill data matrix (now that know size, no need for slow push_back())
   std::vector<size_t> position(nrow);
-#pragma omp parallel num_threads(nthread)
+//#pragma omp parallel num_threads(nthread)
   {
     for (xgboost::bst_ulong j = 0; j < ncol; ++j) {
       DTType dtype = DTGetType(feature_stypes[j]);

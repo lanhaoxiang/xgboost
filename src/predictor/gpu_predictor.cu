@@ -228,7 +228,7 @@ class GPUPredictor : public xgboost::Predictor {
     auto& offsets = *out_offsets;
     offsets.resize(devices_.Size() + 1);
     offsets[0] = 0;
-#pragma omp parallel for schedule(static, 1) if (devices_.Size() > 1)
+//#pragma omp parallel for schedule(static, 1) if (devices_.Size() > 1)
     for (int shard = 0; shard < devices_.Size(); ++shard) {
       int device = devices_[shard];
       auto data_span = data.DeviceSpan(device);

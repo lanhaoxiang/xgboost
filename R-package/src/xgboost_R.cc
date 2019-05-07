@@ -77,7 +77,7 @@ SEXP XGDMatrixCreateFromMat_R(SEXP mat,
     din = REAL(mat);
   }
   std::vector<float> data(nrow * ncol);
-  #pragma omp parallel for schedule(static)
+  //#pragma omp parallel for schedule(static)
   for (omp_ulong i = 0; i < nrow; ++i) {
     for (size_t j = 0; j < ncol; ++j) {
       data[i * ncol +j] = is_int ? static_cast<float>(iin[i + nrow * j]) : din[i + nrow * j];
@@ -111,7 +111,7 @@ SEXP XGDMatrixCreateFromCSC_R(SEXP indptr,
   for (size_t i = 0; i < nindptr; ++i) {
     col_ptr_[i] = static_cast<size_t>(p_indptr[i]);
   }
-  #pragma omp parallel for schedule(static)
+  //#pragma omp parallel for schedule(static)
   for (int64_t i = 0; i < static_cast<int64_t>(ndata); ++i) {
     indices_[i] = static_cast<unsigned>(p_indices[i]);
     data_[i] = static_cast<float>(p_data[i]);
@@ -161,14 +161,14 @@ SEXP XGDMatrixSetInfo_R(SEXP handle, SEXP field, SEXP array) {
   const char *name = CHAR(asChar(field));
   if (!strcmp("group", name)) {
     std::vector<unsigned> vec(len);
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (int i = 0; i < len; ++i) {
       vec[i] = static_cast<unsigned>(INTEGER(array)[i]);
     }
     CHECK_CALL(XGDMatrixSetGroup(R_ExternalPtrAddr(handle), BeginPtr(vec), len));
   } else {
     std::vector<float> vec(len);
-    #pragma omp parallel for schedule(static)
+    //#pragma omp parallel for schedule(static)
     for (int i = 0; i < len; ++i) {
       vec[i] = REAL(array)[i];
     }
@@ -262,7 +262,7 @@ SEXP XGBoosterBoostOneIter_R(SEXP handle, SEXP dtrain, SEXP grad, SEXP hess) {
       << "gradient and hess must have same length";
   int len = length(grad);
   std::vector<float> tgrad(len), thess(len);
-  #pragma omp parallel for schedule(static)
+  //#pragma omp parallel for schedule(static)
   for (int j = 0; j < len; ++j) {
     tgrad[j] = REAL(grad)[j];
     thess[j] = REAL(hess)[j];

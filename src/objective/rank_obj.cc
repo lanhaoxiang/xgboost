@@ -53,7 +53,7 @@ class LambdaRankObj : public ObjFunction {
         << "group structure not consistent with #rows";
 
     const auto ngroup = static_cast<bst_omp_uint>(gptr.size() - 1);
-    #pragma omp parallel
+    //#pragma omp parallel
     {
       // parall construct, declare random number generator here, so that each
       // thread use its own random number generator, seed by thread id and current iteration
