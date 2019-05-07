@@ -567,6 +567,7 @@ class LearnerImpl : public Learner {
     } else {
       LOG(CONSOLE)<<"PredictRaw";
       this->PredictRaw(data, out_preds, ntree_limit);
+      LOG(CONSOLE)<<"PredictRaw success";
       if (!output_margin) {
         LOG(CONSOLE)<<"obj_->PredTransform(out_preds)";
         obj_->PredTransform(out_preds);
