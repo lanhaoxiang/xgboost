@@ -555,15 +555,20 @@ class LearnerImpl : public Learner {
                bool pred_leaf, bool pred_contribs, bool approx_contribs,
                bool pred_interactions) const override {
     if (pred_contribs) {
+      LOG(CONSOLE)<<"gbm_->pred_contribs";
       gbm_->PredictContribution(data, &out_preds->HostVector(), ntree_limit, approx_contribs);
     } else if (pred_interactions) {
+      LOG(CONSOLE)<<"pred_interactions";
       gbm_->PredictInteractionContributions(data, &out_preds->HostVector(), ntree_limit,
                                             approx_contribs);
     } else if (pred_leaf) {
+      LOG(CONSOLE)<<"pred_leaf";
       gbm_->PredictLeaf(data, &out_preds->HostVector(), ntree_limit);
     } else {
+      LOG(CONSOLE)<<"PredictRaw";
       this->PredictRaw(data, out_preds, ntree_limit);
       if (!output_margin) {
+        LOG(CONSOLE)<<"obj_->PredTransform(out_preds)";
         obj_->PredTransform(out_preds);
       }
     }
