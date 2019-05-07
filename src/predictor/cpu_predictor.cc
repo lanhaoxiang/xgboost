@@ -19,15 +19,19 @@ class CPUPredictor : public Predictor {
                              const std::vector<int>& tree_info, int bst_group,
                              unsigned root_index, RegTree::FVec* p_feats,
                              unsigned tree_begin, unsigned tree_end) {
+    LOG(CONSOLE)<< "CPUPredictor 10";
     bst_float psum = 0.0f;
     p_feats->Fill(inst);
+    LOG(CONSOLE)<< "CPUPredictor 11";
     for (size_t i = tree_begin; i < tree_end; ++i) {
       if (tree_info[i] == bst_group) {
         int tid = trees[i]->GetLeafIndex(*p_feats, root_index);
         psum += (*trees[i])[tid].LeafValue();
       }
     }
+    LOG(CONSOLE)<< "CPUPredictor 12";
     p_feats->Drop(inst);
+    LOG(CONSOLE)<< "CPUPredictor 13";
     return psum;
   }
 
@@ -56,29 +60,36 @@ class CPUPredictor : public Predictor {
     // start collecting the prediction
     for (const auto &batch : p_fmat->GetRowBatches()) {
       // parallel over local batch
+      LOG(CONSOLE) << "start collecting the prediction2";
       constexpr int kUnroll = 8;
       const auto nsize = static_cast<bst_omp_uint>(batch.Size());
+      LOG(CONSOLE) << "start collecting the prediction3";
       const bst_omp_uint rest = nsize % kUnroll;
 #pragma omp parallel for schedule(static)
+
+      LOG(CONSOLE) << "start collecting the prediction4";
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
         const int tid = omp_get_thread_num();
         RegTree::FVec& feats = thread_temp[tid];
         int64_t ridx[kUnroll];
+        LOG(CONSOLE) << "start collecting the prediction5";
         SparsePage::Inst inst[kUnroll];
         for (int k = 0; k < kUnroll; ++k) {
+        LOG(CONSOLE) << "start collecting the prediction6";
           ridx[k] = static_cast<int64_t>(batch.base_rowid + i + k);
         }
+        LOG(CONSOLE) << "start collecting the prediction7";
         for (int k = 0; k < kUnroll; ++k) {
           inst[k] = batch[i + k];
         }
+        LOG(CONSOLE) << "start collecting the prediction8";
         for (int k = 0; k < kUnroll; ++k) {
           for (int gid = 0; gid < num_group; ++gid) {
             const size_t offset = ridx[k] * num_group + gid;
-            LOG(CONSOLE) << "start collecting the prediction2";
+            LOG(CONSOLE) << "start collecting the prediction9";
             preds[offset] += this->PredValue(
                 inst[k], model.trees, model.tree_info, gid,
                 info.GetRoot(ridx[k]), &feats, tree_begin, tree_end);
-            LOG(CONSOLE) << "start collecting the prediction3";
           }
         }
       }
@@ -88,11 +99,9 @@ class CPUPredictor : public Predictor {
          auto inst = batch[i];
         for (int gid = 0; gid < num_group; ++gid) {
           const size_t offset = ridx * num_group + gid;
-          LOG(CONSOLE) << "start collecting the prediction4";
           preds[offset] +=
               this->PredValue(inst, model.trees, model.tree_info, gid,
                               info.GetRoot(ridx), &feats, tree_begin, tree_end);
-          LOG(CONSOLE) << "start collecting the prediction5";
         }
       }
     }
