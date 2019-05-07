@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <stdio.h>
 
 #include "./c_api_error.h"
 #include "../data/simple_csr_source.h"
@@ -959,11 +960,15 @@ XGB_DLL int XGBoosterPredict(BoosterHandle handle,
                              const bst_float **out_result) {
   std::vector<bst_float>&preds =
     XGBAPIThreadLocalStore::Get()->ret_vec_float;
+    printf("API_BEGIN\n");
   API_BEGIN();
+  printf("CHECK_HANDLE\n");
   CHECK_HANDLE();
   auto *bst = static_cast<Booster*>(handle);
+  printf("LazyInit\n");
   bst->LazyInit();
   HostDeviceVector<bst_float> tmp_preds;
+  printf("bst->learner()->Predict\n");
   bst->learner()->Predict(
       static_cast<std::shared_ptr<DMatrix>*>(dmat)->get(),
       (option_mask & 1) != 0,
