@@ -74,9 +74,11 @@ class CPUPredictor : public Predictor {
         for (int k = 0; k < kUnroll; ++k) {
           for (int gid = 0; gid < num_group; ++gid) {
             const size_t offset = ridx[k] * num_group + gid;
+            LOG(CONSOLE) << "start collecting the prediction2";
             preds[offset] += this->PredValue(
                 inst[k], model.trees, model.tree_info, gid,
                 info.GetRoot(ridx[k]), &feats, tree_begin, tree_end);
+            LOG(CONSOLE) << "start collecting the prediction3";
           }
         }
       }
@@ -86,9 +88,11 @@ class CPUPredictor : public Predictor {
          auto inst = batch[i];
         for (int gid = 0; gid < num_group; ++gid) {
           const size_t offset = ridx * num_group + gid;
+          LOG(CONSOLE) << "start collecting the prediction4";
           preds[offset] +=
               this->PredValue(inst, model.trees, model.tree_info, gid,
                               info.GetRoot(ridx), &feats, tree_begin, tree_end);
+          LOG(CONSOLE) << "start collecting the prediction5";
         }
       }
     }
