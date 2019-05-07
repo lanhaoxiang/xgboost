@@ -62,7 +62,7 @@ class CPUPredictor : public Predictor {
 #pragma omp parallel for schedule(static)
       LOG(CONSOLE) << "start collecting the prediction11";
       for (bst_omp_uint i = 0; i < nsize - rest; i += kUnroll) {
-      LOG(CONSOLE) << "start collecting the prediction12";
+        LOG(CONSOLE) << "start collecting the prediction12";
         const int tid = omp_get_thread_num();
         LOG(CONSOLE) << "start collecting the prediction13";
         RegTree::FVec& feats = thread_temp[tid];
