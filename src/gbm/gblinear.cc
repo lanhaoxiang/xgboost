@@ -97,6 +97,8 @@ class GBLinear : public GradientBooster {
   void PredictBatch(DMatrix *p_fmat,
                     HostDeviceVector<bst_float> *out_preds,
                     unsigned ntree_limit) override {
+
+    LOG(CONSOLE) << "linear PredictBatch";
     monitor_.Start("PredictBatch");
     CHECK_EQ(ntree_limit, 0U)
         << "GBLinear::Predict ntrees is only valid for gbtree predictor";
@@ -106,9 +108,13 @@ class GBLinear : public GradientBooster {
     if (it != cache_.end() && it->second.predictions.size() != 0) {
       std::vector<bst_float> &y = it->second.predictions;
       out_preds->Resize(y.size());
+      LOG(CONSOLE) << "linear PredictBatch2";
       std::copy(y.begin(), y.end(), out_preds->HostVector().begin());
+      LOG(CONSOLE) << "linear PredictBatch3";
     } else {
+    LOG(CONSOLE) << "linear PredictBatch4";
       this->PredictBatchInternal(p_fmat, &out_preds->HostVector());
+      LOG(CONSOLE) << "linear PredictBatch5";
     }
     monitor_.Stop("PredictBatch");
   }
